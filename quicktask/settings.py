@@ -40,6 +40,12 @@ INSTALLED_APPS = [
     #Modules
     'accounts',
     'home',
+    'task_giver',
+    'task_seeker',
+    # Tailwind
+    'tailwind',
+    #Frontend Plugins
+    'django_cotton',
 ]
 
 MIDDLEWARE = [
@@ -118,6 +124,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Tailwind
+TAILWIND_APP_NAME = 'theme'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

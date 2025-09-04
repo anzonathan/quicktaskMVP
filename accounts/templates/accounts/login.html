@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login - QuickTask</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Toast container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-3"></div>
+
+    <!-- Hidden Django messages for JS -->
+    <div id="django-messages" class="hidden">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="django-message" data-type="{{ message.tags }}">{{ message|escape }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-white shadow p-6 rounded">
+            <h1 class="text-2xl font-bold mb-6">Sign in</h1>
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Username</label>
+                        <input type="text" name="username" value="{{ form.username.value }}" class="w-full border rounded px-3 py-2" required>
+                        {% if form.username.errors %}
+                            {% for error in form.username.errors %}
+                                <p class="text-red-600 text-sm">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Password</label>
+                        <input type="password" name="password" class="w-full border rounded px-3 py-2" required>
+                        {% if form.password.errors %}
+                            {% for error in form.password.errors %}
+                                <p class="text-red-600 text-sm">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% if form.non_field_errors %}
+                        {% for error in form.non_field_errors %}
+                            <p class="text-red-600 text-sm">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <button type="submit" class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded">Login</button>
+            </form>
+            <p class="text-sm text-gray-700 mt-4">No account? <a class="text-blue-600" href="{% url 'accounts:register' %}">Create one</a></p>
+        </div>
+    </div>
+
+    <script>
+        function showToast(message, type) {
+            var container = document.getElementById('toast-container');
+            var toast = document.createElement('div');
+            var isSuccess = type && type.indexOf('success') !== -1;
+            var isError = type && type.indexOf('error') !== -1;
+            var baseClasses = 'max-w-sm w-full border rounded-lg shadow px-4 py-3 text-sm flex items-start gap-3';
+            var successClasses = 'bg-green-50 border-green-200 text-green-800';
+            var errorClasses = 'bg-red-50 border-red-200 text-red-800';
+            var infoClasses = 'bg-blue-50 border-blue-200 text-blue-800';
+            toast.className = baseClasses + ' ' + (isSuccess ? successClasses : (isError ? errorClasses : infoClasses));
+            var iconSvg = isSuccess
+                ? '<svg class="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-7.25 7.25a1 1 0 01-1.414 0l-3-3a1 1 0 111.414-1.414L8.5 11.586l6.543-6.543a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>'
+                : (isError
+                    ? '<svg class="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-5a1 1 0 112 0 1 1 0 01-2 0zm.293-7.707a1 1 0 011.414 0L13 7.586l2.293-2.293a1 1 0 111.414 1.414L14.414 9l2.293 2.293a1 1 0 01-1.414 1.414L13 10.414l-2.293 2.293a1 1 0 01-1.414-1.414L11.586 9 9.293 6.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>'
+                    : '<svg class="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2h1v3a1 1 0 102 0v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>');
+            toast.innerHTML = '<div class="pt-0.5">' + iconSvg + '</div>' +
+                '<div class="flex-1">' + message + '</div>' +
+                '<button class="ml-2 text-gray-400 hover:text-gray-600" onclick="this.parentElement.remove()">&times;</button>';
+            container.appendChild(toast);
+            setTimeout(function() {
+                toast.classList.add('opacity-0');
+                toast.style.transition = 'opacity 300ms';
+                setTimeout(function() { toast.remove(); }, 350);
+            }, 3500);
+        }
+        // Read Django messages from hidden container and show as toasts
+        (function() {
+            var msgNodes = document.querySelectorAll('#django-messages .django-message');
+            msgNodes.forEach(function(node) {
+                var type = node.getAttribute('data-type') || '';
+                var text = node.textContent || '';
+                if (text) { showToast(text, type); }
+            });
+        })();
+    </script>
+</body>
+</html> 
