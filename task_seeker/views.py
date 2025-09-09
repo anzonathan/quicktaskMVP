@@ -1,7 +1,73 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+from django.urls import reverse
+from django.db import IntegrityError
+import json
 
+from task_giver.models import Task
+from .models import SavedTask
 
 @login_required
 def dashboard(request):
     return render(request, 'task_seeker/dashboard.html')
+
+@login_required
+def job_posts(request):
+    # Fetch all jobs from the database.
+    # Corrected: Removed 'applicants', 'views', and 'requirements' as they are not direct fields on the model.
+    jobs = list(Task.objects.all().order_by('posted_on').values(
+        'id', 'title', 'user__username', 'posted_on', 'budget', 'deadline', 'location', 
+        'category', 'description'
+    ))
+    
+    # Get the IDs of all tasks saved by the current user.
+    saved_job_ids = list(SavedTask.objects.filter(user=request.user).values_list('task_id', flat=True))
+
+    # Convert date and decimal fields to a string format that can be serialized to JSON.
+    for job in jobs:
+        if job['posted_on']:
+            job['posted_on'] = job['posted_on'].strftime('%Y-%m-%d')
+        if job['deadline']:
+            job['deadline'] = job['deadline'].strftime('%Y-%m-%d')
+        # Convert Decimal budget to a string to make it JSON serializable
+        if 'budget' in job:
+            job['budget'] = str(job['budget'])
+    
+    context = {
+        'jobs_json': json.dumps(jobs),
+        'saved_jobs_json': json.dumps(saved_job_ids),
+    }
+    return render(request, "task_seeker/job_posts.html", context)
+
+def save_task(request, task_id):
+    """
+    Toggles the saved status of a task for the current user and returns a JSON response.
+    """
+    if request.method == 'POST':
+        user = request.user
+        
+        # Check for authentication.
+        if not user.is_authenticated:
+            # Return a JSON response for an unauthenticated user.
+            return JsonResponse({'status': 'error', 'message': 'Authentication required.'}, status=401)
+
+        # Use get_object_or_404 for a more Django-friendly way to handle a missing task.
+        task = get_object_or_404(Task, pk=task_id)
+
+        try:
+            # Check if the task is already saved by the user
+            saved_task = SavedTask.objects.get(user=user, task=task)
+            saved_task.delete()
+            # Return a success JSON response indicating the task was unsaved.
+            return JsonResponse({'status': 'unsaved', 'message': 'Task unsaved.'})
+        except SavedTask.DoesNotExist:
+            # Task is not saved, so save it.
+            SavedTask.objects.create(user=user, task=task)
+            # Return a success JSON response indicating the task was saved.
+            return JsonResponse({'status': 'saved', 'message': 'Task saved.'})
+    
+    # If the request method is not POST, return a 405 Method Not Allowed error.
+    return JsonResponse({'status': 'error', 'message': 'Method not allowed.'}, status=405)

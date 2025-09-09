@@ -44,51 +44,187 @@
                 {% endif %}
                 
                 <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                    <form method="post" action="{% url 'task_giver:postjob' %}" enctype="multipart/form-data" class="space-y-6">
+                    <form method="post" enctype="multipart/form-data" class="space-y-6">
                         {% csrf_token %}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="task-title" class="block text-sm font-medium text-gray-700 mb-2">Task Title</label>
-                                <input type="text" id="task-title" name="task-title" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. Design a logo for a startup" required>
+                                <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Task Title</label>
+                                {{ form.title }}
+                                {% if form.title.errors %}
+                                    {% for error in form.title.errors %}
+                                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
                             <div>
-                                <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                                <select id="category" name="category" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option>Web Development</option>
-                                    <option>Graphic Design</option>
-                                    <option>Writing & Translation</option>
-                                    <option>Digital Marketing</option>
-                                    <option>Video & Animation</option>
-                                    <option>Other</option>
+                                <label for="{{ form.category.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                                <select id="{{ form.category.id_for_label }}" name="{{ form.category.html_name }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="Web Development">Web Development</option>
+                                    <option value="Graphic Design">Graphic Design</option>
+                                    <option value="Writing & Translation">Writing & Translation</option>
+                                    <option value="Digital Marketing">Digital Marketing</option>
+                                    <option value="Video & Animation">Video & Animation</option>
+                                    <option value="Other">Other</option>
                                 </select>
+                                {% if form.category.errors %}
+                                    {% for error in form.category.errors %}
+                                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
                         </div>
                         
                         <div>
-                            <label for="task-description" class="block text-sm font-medium text-gray-700 mb-2">Task Description</label>
-                            <textarea id="task-description" name="task-description" rows="6" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Provide a detailed description of the task, including requirements, deliverables, and any relevant details..." required></textarea>
+                            <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Task Description</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                {% for error in form.description.errors %}
+                                    <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+                                {% endfor %}
+                            {% endif %}
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="budget" class="block text-sm font-medium text-gray-700 mb-2">Budget</label>
-                                <input type="number" id="budget" name="budget" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. UGX 50,000 (Fixed price)" required>
+                                <label for="{{ form.budget.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Budget</label>
+                                {{ form.budget }}
+                                {% if form.budget.errors %}
+                                    {% for error in form.budget.errors %}
+                                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
                             <div>
-                                <label for="deadline" class="block text-sm font-medium text-gray-700 mb-2">Deadline (Optional)</label>
-                                <input type="date" id="deadline" name="deadline" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <label for="{{ form.deadline.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Deadline (Optional)</label>
+                                {{ form.deadline }}
+                                {% if form.deadline.errors %}
+                                    {% for error in form.deadline.errors %}
+                                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
+                        </div>
+
+                        <div>
+                            <label for="{{ form.location.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                            <select id="{{ form.location.id_for_label }}" name="{{ form.location.html_name }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                                <option value="" disabled>Select a District</option>
+                                <option value="Abim">Abim</option>
+                                <option value="Adjumani">Adjumani</option>
+                                <option value="Agago">Agago</option>
+                                <option value="Alebtong">Alebtong</option>
+                                <option value="Amolatar">Amolatar</option>
+                                <option value="Amuria">Amuria</option>
+                                <option value="Amuru">Amuru</option>
+                                <option value="Apac">Apac</option>
+                                <option value="Arua">Arua</option>
+                                <option value="Budaka">Budaka</option>
+                                <option value="Bududa">Bududa</option>
+                                <option value="Bugiri">Bugiri</option>
+                                <option value="Buhweju">Buhweju</option>
+                                <option value="Buikwe">Buikwe</option>
+                                <option value="Bukedea">Bukedea</option>
+                                <option value="Bukomansimbi">Bukomansimbi</option>
+                                <option value="Bukwo">Bukwo</option>
+                                <option value="Bulambuli">Bulambuli</option>
+                                <option value="Buliisa">Buliisa</option>
+                                <option value="Bundibugyo">Bundibugyo</option>
+                                <option value="Bushenyi">Bushenyi</option>
+                                <option value="Busia">Busia</option>
+                                <option value="Butaleja">Butaleja</option>
+                                <option value="Butambala">Butambala</option>
+                                <option value="Butebo">Butebo</option>
+                                <option value="Buyende">Buyende</option>
+                                <option value="Dokolo">Dokolo</option>
+                                <option value="Gomba">Gomba</option>
+                                <option value="Gulu">Gulu</option>
+                                <option value="Ibanda">Ibanda</option>
+                                <option value="Iganga">Iganga</option>
+                                <option value="Isingiro">Isingiro</option>
+                                <option value="Jinja">Jinja</option>
+                                <option value="Kaabong">Kaabong</option>
+                                <option value="Kabale">Kabale</option>
+                                <option value="Kabarole">Kabarole</option>
+                                <option value="Kaberamaido">Kaberamaido</option>
+                                <option value="Kalangala">Kalangala</option>
+                                <option value="Kaliro">Kaliro</option>
+                                <option value="Kalungu">Kalungu</option>
+                                <option value="Kampala" selected>Kampala</option>
+                                <option value="Kamuli">Kamuli</option>
+                                <option value="Kamwenge">Kamwenge</option>
+                                <option value="Kanungu">Kanungu</option>
+                                <option value="Kapchorwa">Kapchorwa</option>
+                                <option value="Kasese">Kasese</option>
+                                <option value="Katakwi">Katakwi</option>
+                                <option value="Kayunga">Kayunga</option>
+                                <option value="Kiboga">Kiboga</option>
+                                <option value="Kibale">Kibale</option>
+                                <option value="Kiruhura">Kiruhura</option>
+                                <option value="Kisoro">Kisoro</option>
+                                <option value="Kitgum">Kitgum</option>
+                                <option value="Kyenjojo">Kyenjojo</option>
+                                <option value="Kyegegwa">Kyegegwa</option>
+                                <option value="Lira">Lira</option>
+                                <option value="Luuka">Luuka</option>
+                                <option value="Masaka">Masaka</option>
+                                <option value="Masindi">Masindi</option>
+                                <option value="Mbale">Mbale</option>
+                                <option value="Mbarara">Mbarara</option>
+                                <option value="Mitooma">Mitooma</option>
+                                <option value="Mityana">Mityana</option>
+                                <option value="Moroto">Moroto</option>
+                                <option value="Mubende">Mubende</option>
+                                <option value="Mukono">Mukono</option>
+                                <option value="Nakaseke">Nakaseke</option>
+                                <option value="Nakapiripirit">Nakapiripirit</option>
+                                <option value="Nakasongola">Nakasongola</option>
+                                <option value="Namayingo">Namayingo</option>
+                                <option value="Namisindwa">Namisindwa</option>
+                                <option value="Namutumba">Namutumba</option>
+                                <option value="Napak">Napak</option>
+                                <option value="Nebbi">Nebbi</option>
+                                <option value="Ngora">Ngora</option>
+                                <option value="Ntoroko">Ntoroko</option>
+                                <option value="Ntungamo">Ntungamo</option>
+                                <option value="Omoro">Omoro</option>
+                                <option value="Otuke">Otuke</option>
+                                <option value="Oyam">Oyam</option>
+                                <option value="Pader">Pader</option>
+                                <option value="Pallisa">Pallisa</option>
+                                <option value="Rakai">Rakai</option>
+                                <option value="Rubirizi">Rubirizi</option>
+                                <option value="Rukungiri">Rukungiri</option>
+                                <option value="Sembabule">Sembabule</option>
+                                <option value="Serere">Serere</option>
+                                <option value="Sheema">Sheema</option>
+                                <option value="Sironko">Sironko</option>
+                                <option value="Soroti">Soroti</option>
+                                <option value="Tororo">Tororo</option>
+                                <option value="Wakiso">Wakiso</option>
+                                <option value="Yumbe">Yumbe</option>
+                                <option value="Zombo">Zombo</option>
+                            </select>
+                            {% if form.location.errors %}
+                                {% for error in form.location.errors %}
+                                    <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+                                {% endfor %}
+                            {% endif %}
                         </div>
                         
                         <div>
-                            <label for="attachments" class="block text-sm font-medium text-gray-700 mb-2">Attachments (Optional) *pdf only</label>
+                            <label for="{{ form.file_upload.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">Attachments (Optional) *pdf only</label>
                             <div class="flex items-center space-x-4">
-                                <label for="file-upload" class="cursor-pointer px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">
+                                <label for="{{ form.file_upload.id_for_label }}" class="cursor-pointer px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">
                                     <i class="fas fa-upload mr-2"></i> Upload Files 
                                 </label>
                                 <!-- The 'accept' attribute helps the browser filter files -->
-                                <input id="file-upload" name="file-upload" type="file" class="hidden" accept=".pdf">
+                                {{ form.file_upload }}
                                 <span class="text-sm text-gray-500" id="file-names">No files selected</span>
+                                {% if form.file_upload.errors %}
+                                    {% for error in form.file_upload.errors %}
+                                        <p class="mt-2 text-sm text-red-600">{{ error }}</p>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
                         </div>
                         

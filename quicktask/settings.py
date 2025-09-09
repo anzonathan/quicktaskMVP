@@ -42,9 +42,8 @@ INSTALLED_APPS = [
     'home',
     'task_giver',
     'task_seeker',
-    # Tailwind
-    'tailwind',
     #Frontend Plugins
+    'django.contrib.humanize',
     'django_cotton',
 ]
 

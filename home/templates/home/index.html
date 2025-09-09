@@ -105,8 +105,12 @@
                     </div>
                 </div>
 
-                <div class="hidden md:block">
-                    <a href="{% url 'accounts:register' %}" class="bg-royal-blue hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors font-medium inline-block">
+                <!-- Combined and styled buttons for desktop -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="{% url 'accounts:login' %}" class="font-medium text-white px-6 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 hover:bg-white hover:text-royal-blue border-2 border-transparent hover:border-royal-blue">
+                        Login
+                    </a>
+                    <a href="{% url 'accounts:register' %}" class="bg-royal-blue text-white px-6 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-royal-blue/30">
                         Join Now
                     </a>
                 </div>
@@ -129,7 +133,11 @@
                 <a href="#features" class="block px-3 py-2 text-gray-300 hover:text-accent-blue">Features</a>
                 <a href="#about" class="block px-3 py-2 text-gray-300 hover:text-accent-blue">About Us</a>
                 <a href="#faq" class="block px-3 py-2 text-gray-300 hover:text-accent-blue">FAQ</a>
-                <a href="{% url 'accounts:register' %}" class="block w-full mt-4 bg-royal-blue hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors font-medium text-center">
+                <!-- Added login button to mobile menu for consistency -->
+                <a href="{% url 'accounts:login' %}" class="block w-full mt-4 bg-royal-blue hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors font-medium text-center">
+                    Login
+                </a>
+                <a href="{% url 'accounts:register' %}" class="block w-full mt-2 bg-royal-blue hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors font-medium text-center">
                     Join Now
                 </a>
             </div>

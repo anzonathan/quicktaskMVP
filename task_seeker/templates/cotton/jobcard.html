@@ -1,0 +1,63 @@
+<div class="job-card bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div class="flex items-start justify-between mb-4">
+        <div class="flex items-start space-x-4">
+            <!-- Placeholder for a user profile image -->
+            <div class="flex-1">
+                <!-- Dynamically display the task title -->
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ task.title }}</h3>
+                <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+                    <span class="flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <!-- Use Django's 'timesince' filter to show how long ago the task was posted -->
+                        Posted {{ task.posted_on|timesince }} ago
+                    </span>
+                    <span class="flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3-.895-3-2s1.343-2 3-2 3 .895 3 2-1.343 2-3 2z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14c1.657 0 3 .895 3 2s-1.343 2-3 2-3-.895-3-2 1.343-2 3-2z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v6"></path>
+                        </svg>
+                        <!-- Display the deadline -->
+                        Due: {{ task.deadline|date:"M d, Y" }}
+                    </span>
+                    <!-- Display the category as a badge -->
+                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">{{ task.category }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2">
+            <!-- Dynamically display the status -->
+            <span class="status-badge bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">{{ task.get_status_display }}</span>
+
+        </div>
+    </div>
+
+    <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-6">
+            <!-- Display the budget with currency -->
+            <span class="price-highlight text-2xl font-bold text-green-600">UGX{{ task.budget }}</span>
+            <div class="flex items-center space-x-4 text-sm text-gray-600">
+                <!-- These fields are not in your model, so we'll remove them or make them placeholders -->
+                <span class="flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                    0 views
+                </span>
+                <span class="flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    0 applicants
+                </span>
+            </div>
+        </div>
+        <!-- Fixed button to be a link to the detail page with the correct URL -->
+        <a href="{% url 'task_giver:task_detail' task.id %}" class="interactive-btn glow-on-hover bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium">
+            View Details
+        </a>
+    </div>
+</div>

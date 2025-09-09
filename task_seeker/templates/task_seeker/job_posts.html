@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Jobs - Job Listing Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#14B8A6',
+                        accent: '#F97316',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        error: '#EF4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .job-card {
+            transition: all 0.3s ease;
+        }
+        .job-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .details-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .details-content.expanded {
+            max-height: 300px;
+        }
+        .filter-dropdown {
+            transition: all 0.2s ease;
+        }
+        .search-input:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Main Content -->
+    <div class="lg:ml-64 min-h-screen">
+        <div class="container mx-auto px-4 py-8 pt-20 lg:pt-8 max-w-6xl">
+    <!-- Mobile Menu Button -->
+    <div class="lg:hidden fixed top-0 left-0 right-0 bg-white shadow-md z-50 p-4">
+        <button id="mobile-menu-btn" class="text-gray-600 hover:text-gray-900 transition-colors">
+            <i class="fas fa-bars text-xl"></i>
+        </button>
+        <span class="ml-3 text-lg font-semibold text-gray-800">QuickTask - Job Listings</span>
+    </div>
+
+    <!-- Sidebar -->
+    <c-sidebar>
+    </c-sidebar>
+
+    <!-- Overlay for mobile -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden hidden"></div>
+
+        <!-- Page Heading -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Browse Jobs</h1>
+            <p class="text-gray-600">Find your perfect job opportunity</p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="relative mb-8 max-w-2xl mx-auto">
+            <div class="relative">
+                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input 
+                    type="text" 
+                    id="searchInput"
+                    placeholder="Search for jobs, companies, or skills..."
+                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent search-input"
+                    oninput="filterJobs()"
+                />
+            </div>
+        </div>
+
+        <!-- Filter Section and Saved Jobs -->
+        <div class="flex flex-col lg:flex-row justify-between items-center gap-4 mb-8">
+            <div class="flex flex-wrap gap-4 items-center">
+                <!-- Job Type Filter -->
+                <div class="relative">
+                    <select id="jobTypeFilter" class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-primary filter-dropdown" onchange="filterJobs()">
+                        <option value="">All Job Types</option>
+                        <option value="Remote">Remote</option>
+                        <option value="Full-time">Full-time</option>
+                        <option value="Part-time">Part-time</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                    <svg class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+
+                <!-- Location Filter -->
+                <div class="relative">
+                    <select id="locationFilter" class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-primary filter-dropdown" onchange="filterJobs()">
+                        <option value="">All Locations</option>
+                        <option value="Kampala">Kampala</option>
+                        <option value="Entebbe">Entebbe</option>
+                        <option value="Jinja">Jinja</option>
+                        <option value="Remote">Remote</option>
+                    </select>
+                    <svg class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+
+                <!-- Price Range Filter -->
+                <div class="relative">
+                    <select id="priceFilter" class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-primary filter-dropdown" onchange="filterJobs()">
+                        <option value="">All Price Ranges</option>
+                        <option value="0-50000">UGX 0 - 50,000</option>
+                        <option value="50000-100000">UGX 50,000 - 100,000</option>
+                        <option value="100000-200000">UGX 100,000 - 200,000</option>
+                        <option value="200000+">UGX 200,000+</option>
+                    </select>
+                    <svg class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Saved Jobs Icon -->
+            <button onclick="toggleSavedJobs()" class="bg-white border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition-colors duration-200 flex items-center gap-2">
+                <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <span class="text-sm font-medium">Saved Jobs</span>
+                <span id="savedCount" class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">0</span>
+            </button>
+        </div>
+
+        <!-- Job Listings -->
+        <div id="jobListings" class="space-y-6">
+        </div>
+
+        <!-- No Results Message -->
+        <div id="noResults" class="text-center py-12 hidden">
+            <div class="text-gray-400 text-6xl mb-4">🔍</div>
+            <h3 class="text-xl font-semibold text-gray-600 mb-2">No jobs found</h3>
+            <p class="text-gray-500">Try adjusting your search criteria or filters</p>
+        </div>
+    </div>
+    </div>
+    
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+    <script>
+        // Mobile menu functionality
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('sidebar-overlay').classList.toggle('hidden');
+        });
+
+        document.getElementById('sidebar-overlay').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+            document.getElementById('sidebar-overlay').classList.add('hidden');
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                document.getElementById('sidebar').classList.remove('-translate-x-full');
+                document.getElementById('sidebar-overlay').classList.add('hidden');
+            } else {
+                document.getElementById('sidebar').classList.add('-translate-x-full');
+            }
+        });
+
+        const jobsData = JSON.parse('{{ jobs_json|escapejs }}');
+        let savedJobs = JSON.parse('{{ saved_jobs_json|escapejs }}');
+        let filteredJobs = jobsData;
+
+        // Get CSRF token from a hidden input
+        function getCsrfToken() {
+            return document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+        }
+
+        // Render jobs dynamically
+        function renderJobs(jobs) {
+            const jobListingsContainer = document.getElementById('jobListings');
+            jobListingsContainer.innerHTML = '';
+            const noResults = document.getElementById('noResults');
+
+            if (jobs.length === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+                jobs.forEach(job => {
+                    const isSaved = savedJobs.includes(job.id);
+                    const saveButtonClasses = isSaved
+                        ? 'bg-red-500 text-white border border-red-500 hover:bg-red-600'
+                        : 'border border-gray-300 text-gray-700 hover:bg-gray-50';
+                    const saveIconClasses = isSaved
+                        ? 'text-white fill-current'
+                        : 'text-gray-700';
+                    const saveButtonText = isSaved ? 'Saved' : 'Save';
+
+                    const jobCardHtml = `
+                        <div class="job-card bg-white rounded-lg shadow-md border border-gray-200 p-6 hover:shadow-lg transition-all duration-300" data-job-id="${job.id}">
+                            <div class="flex flex-col lg:flex-row gap-4">
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div>
+                                            <h3 class="text-xl font-bold text-gray-800 mb-1">${job.title}</h3>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
+                                        <span class="flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            ${job.posted_on}
+                                        </span>
+                                        <span class="flex items-center gap-1 text-primary font-semibold">
+                                            UGX ${job.budget}
+                                        </span>
+                                        <span class="flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                            Due by ${job.deadline}
+                                        </span>
+                                        <span class="flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            </svg>
+                                            ${job.location}
+                                        </span>
+                                    </div>
+                                    <div class="flex flex-wrap items-center gap-4 mb-4">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                                            ${job.category}
+                                        </span>
+                                        <span class="flex items-center gap-1 text-sm text-gray-500">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                            </svg>
+                                            1M Applicants
+                                        </span>
+                                        <span class="flex items-center gap-1 text-sm text-gray-500">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                            </svg>
+                                            1M Views
+                                        </span>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <button onclick="toggleDetails(${job.id})" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium">
+                                            View Details
+                                        </button>
+                                        <button id="save-button-${job.id}" onclick="toggleSaveJob(event, '${job.save_url}')" class="px-4 py-2 rounded-lg transition-colors text-sm font-medium flex items-center gap-2 ${saveButtonClasses}">
+                                            <svg class="w-4 h-4 ${saveIconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                            </svg>
+                                            ${saveButtonText}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="details-${job.id}" class="details-content mt-6 pt-6 border-t border-gray-200">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3">Job Description</h4>
+                                <p class="text-gray-600 mb-4">${job.description}</p>
+                                <div class="mt-4 flex gap-3">
+                                    <button class="bg-success text-white px-6 py-2 rounded-lg hover:bg-success/90 transition-colors font-medium">
+                                        Apply Now
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    jobListingsContainer.insertAdjacentHTML('beforeend', jobCardHtml);
+                });
+            }
+        }
+
+        // Toggle job details
+        function toggleDetails(jobId) {
+            const detailsElement = document.getElementById(`details-${jobId}`);
+            const button = event.target;
+            
+            if (detailsElement.classList.contains('expanded')) {
+                detailsElement.classList.remove('expanded');
+                button.textContent = 'View Details';
+            } else {
+                detailsElement.classList.add('expanded');
+                button.textContent = 'Hide Details';
+            }
+        }
+
+        // Toggle save job
+        async function toggleSaveJob(event, url) {
+            const saveButton = event.currentTarget;
+            const jobId = saveButton.id.replace('save-button-', '');
+
+            // Check if jobId is valid before proceeding
+            if (!jobId || isNaN(jobId)) {
+                console.error('Failed to save job: Invalid jobId provided.', { jobId });
+                if (saveButton) {
+                    saveButton.textContent = 'Error';
+                }
+                return;
+            }
+        
+            try {
+                // Show a loading state
+                saveButton.innerHTML = `<svg class="animate-spin w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
+        
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    }
+                });
+        
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Update savedJobs array based on the server response
+                    if (data.status === 'saved') {
+                        savedJobs.push(parseInt(jobId)); // Push the parsed integer
+                        saveButton.textContent = 'Saved';
+                    } else if (data.status === 'unsaved') {
+                        savedJobs = savedJobs.filter(id => id !== parseInt(jobId)); // Filter with parsed integer
+                        saveButton.textContent = 'Unsaved';
+                    }
+                    updateSavedCount();
+                    renderJobs(jobsData);
+                } else {
+                    // Check if the response is JSON before attempting to parse it
+                    const contentType = response.headers.get("content-type");
+                    if (contentType && contentType.includes("application/json")) {
+                        const errorData = await response.json();
+                        console.error(`Failed to save job: ${response.status} - ${errorData.message}`);
+                    } else {
+                        const errorText = await response.text();
+                        console.error(`Failed to save job: ${response.status} - ${errorText}`);
+                    }
+                    // Revert the button text on error to a clear state
+                    saveButton.textContent = 'Error';
+                }
+            } catch (error) {
+                console.error('Error saving job:', error);
+                // Revert the button text on network error
+                saveButton.textContent = 'Error';
+            }
+        }
+        
+
+
+
+        // Update saved count
+        function updateSavedCount() {
+            document.getElementById('savedCount').textContent = savedJobs.length;
+        }
+
+
+
+        // Filter jobs
+        function filterJobs() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const jobType = document.getElementById('jobTypeFilter').value;
+            const location = document.getElementById('locationFilter').value;
+            const priceRange = document.getElementById('priceFilter').value;
+            
+            filteredJobs = jobsData.filter(job => {
+                const matchesSearch = job.title.toLowerCase().includes(searchTerm) ||
+                                    job.poster.toLowerCase().includes(searchTerm) ||
+                                    job.description.toLowerCase().includes(searchTerm);
+                
+                const matchesJobType = !jobType || job.jobType === jobType;
+                const matchesLocation = !location || job.location === location;
+                
+                let matchesPrice = true;
+                if (priceRange) {
+                    const jobPrice = parseInt(job.budget.replace(/[^0-9]/g, ''));
+                    if (priceRange === '0-50000') {
+                        matchesPrice = jobPrice <= 50000;
+                    } else if (priceRange === '50000-100000') {
+                        matchesPrice = jobPrice > 50000 && jobPrice <= 100000;
+                    } else if (priceRange === '100000-200000') {
+                        matchesPrice = jobPrice > 100000 && jobPrice <= 200000;
+                    } else if (priceRange === '200000+') {
+                        matchesPrice = jobPrice > 200000;
+                    }
+                }
+                
+                return matchesSearch && matchesJobType && matchesLocation && matchesPrice;
+            });
+            
+            renderJobs(filteredJobs);
+        }
+
+        // Toggle saved jobs view
+        function toggleSavedJobs() {
+            const savedJobsData = jobsData.filter(job => savedJobs.includes(job.id));
+            if (savedJobsData.length === 0) {
+                alert('No saved jobs yet! Save some jobs to view them here.');
+                return;
+            }
+            
+            const isShowingSaved = document.getElementById('jobListings').getAttribute('data-showing-saved') === 'true';
+            
+            if (isShowingSaved) {
+                renderJobs(filteredJobs);
+                document.getElementById('jobListings').setAttribute('data-showing-saved', 'false');
+            } else {
+                renderJobs(savedJobsData);
+                document.getElementById('jobListings').setAttribute('data-showing-saved', 'true');
+            }
+        }
+
+        // Initialize the page when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            updateSavedCount();
+            renderJobs(jobsData);
+        });
+    </script>
+</body>
+</html>
