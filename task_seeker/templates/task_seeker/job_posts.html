@@ -43,6 +43,17 @@
         .search-input:focus {
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
+
+        .filter-active {
+            background-color: #EF4444; /* red-500 */
+            border-color: #EF4444; /* red-500 */
+        }
+        .filter-active:hover {
+            border-color: #DC2626; /* red-600 */
+        }
+        .filter-active svg {
+            color: #FFB8B8; /* white */
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -70,21 +81,6 @@
             <p class="text-gray-600">Find your perfect job opportunity</p>
         </div>
 
-        <!-- Search Bar -->
-        <div class="relative mb-8 max-w-2xl mx-auto">
-            <div class="relative">
-                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-                <input 
-                    type="text" 
-                    id="searchInput"
-                    placeholder="Search for jobs, companies, or skills..."
-                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent search-input"
-                    oninput="filterJobs()"
-                />
-            </div>
-        </div>
 
         <!-- Filter Section and Saved Jobs -->
         <div class="flex flex-col lg:flex-row justify-between items-center gap-4 mb-8">
@@ -93,10 +89,6 @@
                 <div class="relative">
                     <select id="jobTypeFilter" class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-primary filter-dropdown" onchange="filterJobs()">
                         <option value="">All Job Types</option>
-                        <option value="Remote">Remote</option>
-                        <option value="Full-time">Full-time</option>
-                        <option value="Part-time">Part-time</option>
-                        <option value="Hybrid">Hybrid</option>
                     </select>
                     <svg class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -133,7 +125,7 @@
             </div>
 
             <!-- Saved Jobs Icon -->
-            <button onclick="toggleSavedJobs()" class="bg-white border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition-colors duration-200 flex items-center gap-2">
+            <button id="savedJobsBtn" onclick="toggleSavedJobs()" class="bg-white border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition-colors duration-200 flex items-center gap-2">
                 <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                 </svg>
@@ -149,8 +141,8 @@
         <!-- No Results Message -->
         <div id="noResults" class="text-center py-12 hidden">
             <div class="text-gray-400 text-6xl mb-4">🔍</div>
-            <h3 class="text-xl font-semibold text-gray-600 mb-2">No jobs found</h3>
-            <p class="text-gray-500">Try adjusting your search criteria or filters</p>
+            <h3 id="noResultsTitle" class="text-xl font-semibold text-gray-600 mb-2">No jobs found</h3>
+            <p id="noResultsText" class="text-gray-500">Try adjusting your search criteria or filters</p>
         </div>
     </div>
     </div>
@@ -361,14 +353,26 @@
         }
         
 
+        // Populate the category filter dropdown with unique categories from jobsData
+        function populateCategoryFilter() {
+            const filter = document.getElementById('jobTypeFilter');
+            const categories = [...new Set(jobsData.map(job => job.category))];
+            
+            categories.forEach(category => {
+                if (category) {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    filter.appendChild(option);
+                }
+            });
+        }
 
 
         // Update saved count
         function updateSavedCount() {
             document.getElementById('savedCount').textContent = savedJobs.length;
         }
-
-
 
         // Filter jobs
         function filterJobs() {
@@ -382,7 +386,7 @@
                                     job.poster.toLowerCase().includes(searchTerm) ||
                                     job.description.toLowerCase().includes(searchTerm);
                 
-                const matchesJobType = !jobType || job.jobType === jobType;
+                const matchesJobType = !jobType || job.category === jobType;
                 const matchesLocation = !location || job.location === location;
                 
                 let matchesPrice = true;
@@ -407,25 +411,40 @@
 
         // Toggle saved jobs view
         function toggleSavedJobs() {
-            const savedJobsData = jobsData.filter(job => savedJobs.includes(job.id));
-            if (savedJobsData.length === 0) {
-                alert('No saved jobs yet! Save some jobs to view them here.');
-                return;
-            }
-            
-            const isShowingSaved = document.getElementById('jobListings').getAttribute('data-showing-saved') === 'true';
-            
+            const jobListingsContainer = document.getElementById('jobListings');
+            const noResultsTitle = document.getElementById('noResultsTitle');
+            const noResultsText = document.getElementById('noResultsText');
+            const savedJobsBtn = document.getElementById('savedJobsBtn');
+
+            // Toggle the 'filter-active' class on the button
+            savedJobsBtn.classList.toggle('filter-active');
+
+            // Check if the button now has the 'filter-active' class
+            const isShowingSaved = savedJobsBtn.classList.contains('filter-active');
+
             if (isShowingSaved) {
-                renderJobs(filteredJobs);
-                document.getElementById('jobListings').setAttribute('data-showing-saved', 'false');
+                // Switch to showing only saved jobs
+                const savedJobsData = jobsData.filter(job => savedJobs.includes(job.id));
+
+                if (savedJobsData.length === 0) {
+                    noResultsTitle.textContent = 'No saved jobs yet!';
+                    noResultsText.textContent = 'Save some jobs to view them here.';
+                    renderJobs([]); // This will show the noResults message
+                } else {
+                    renderJobs(savedJobsData);
+                }
+                // Use the button's class state as the source of truth
+                jobListingsContainer.setAttribute('data-showing-saved', 'true');
             } else {
-                renderJobs(savedJobsData);
-                document.getElementById('jobListings').setAttribute('data-showing-saved', 'true');
+                // Switch back to showing all jobs (based on other filters)
+                jobListingsContainer.setAttribute('data-showing-saved', 'false');
+                filterJobs();
             }
         }
 
         // Initialize the page when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
+            populateCategoryFilter();
             updateSavedCount();
             renderJobs(jobsData);
         });
