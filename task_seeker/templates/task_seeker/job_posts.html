@@ -262,7 +262,7 @@
                                         <button onclick="toggleDetails(${job.id})" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium">
                                             View Details
                                         </button>
-                                        <button id="save-button-${job.id}" onclick="toggleSaveJob(event, '${job.save_url}')" class="px-4 py-2 rounded-lg transition-colors text-sm font-medium flex items-center gap-2 ${saveButtonClasses}">
+                                        <button id="save-button-${job.id}" onclick="toggleSaveJob(${job.id})" class="px-4 py-2 rounded-lg transition-colors text-sm font-medium flex items-center gap-2 ${saveButtonClasses}">
                                             <svg class="w-4 h-4 ${saveIconClasses}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                                             </svg>
@@ -302,9 +302,9 @@
         }
 
         // Toggle save job
-        async function toggleSaveJob(event, url) {
-            const saveButton = event.currentTarget;
-            const jobId = saveButton.id.replace('save-button-', '');
+        async function toggleSaveJob(jobId) {
+            const saveButton = document.getElementById(`save-button-${jobId}`);
+            const url = `/seeker/job_posts/${jobId}/save_task`;
 
             // Check if jobId is valid before proceeding
             if (!jobId || isNaN(jobId)) {
