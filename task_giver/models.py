@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
 from django.core.validators import FileExtensionValidator
 
 # This model represents a task that a user can post.
@@ -30,3 +31,14 @@ class Task(models.Model):
     def __str__(self):
         return self.title
 
+class Applications(models.Model):
+        applied_on = models.DateTimeField(auto_now_add=True)
+        user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+        task = models.ForeignKey(Task, on_delete=models.CASCADE)
+            
+        STATUS_CHOICES = (
+            ('review', 'Review'),
+            ('rejected', 'Rejected'),
+            ('approved', 'Approved'),
+        )
+        status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')

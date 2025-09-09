@@ -71,3 +71,7 @@ def save_task(request, task_id):
     
     # If the request method is not POST, return a 405 Method Not Allowed error.
     return JsonResponse({'status': 'error', 'message': 'Method not allowed.'}, status=405)
+
+@login_required
+def apply(request):
+    redirect(request,'task_giver:dashboard')

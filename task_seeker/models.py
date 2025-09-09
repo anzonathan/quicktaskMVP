@@ -15,3 +15,6 @@ class SavedTask(models.Model):
 
     def __str__(self):
         return f"{self.user.username} saved {self.task.title}"
+
+
+
