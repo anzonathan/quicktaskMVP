@@ -17,8 +17,8 @@ def dashboard(request):
 @login_required
 def job_posts(request):
     # Fetch all jobs from the database.
-    # Corrected: Removed 'applicants', 'views', and 'requirements' as they are not direct fields on the model.
-    jobs = list(Task.objects.all().order_by('posted_on').values(
+
+    jobs = list(Task.objects.all().order_by('-posted_on').values(
         'id', 'title', 'user__username', 'posted_on', 'budget', 'deadline', 'location', 
         'category', 'description'
     ))
@@ -35,6 +35,9 @@ def job_posts(request):
         # Convert Decimal budget to a string to make it JSON serializable
         if 'budget' in job:
             job['budget'] = str(job['budget'])
+
+
+   
     
     context = {
         'jobs_json': json.dumps(jobs),

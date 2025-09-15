@@ -9,32 +9,26 @@
     <nav class="mt-6">
         <ul class="space-y-2 px-4">
             <li>
-                <!-- Updated URL with namespace 'task_giver' -->
-                <a href="{% url 'task_giver:dashboard' %}" class="nav-link flex items-center px-4 py-3 bg-blue-50 text-blue-600 border-r-2 border-blue-600 rounded-lg transition-colors duration-200">
+                
+                <a href="{% url 'task_seeker:dashboard' %}" class="nav-link flex items-center px-4 py-3 bg-blue-50 text-blue-600 border-r-2 border-blue-600 rounded-lg transition-colors duration-200">
                     <i class="fas fa-tachometer-alt w-5 mr-3"></i>
                     Dashboard
                 </a>
             </li>
             <li>
-                <a href="my_application.html" class="nav-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
+                <a href="#" class="nav-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
                     <i class="fas fa-file-alt w-5 mr-3"></i>
-                    Job Applications
+                    My Applications
                 </a>
             </li>
             <li>
-                <!-- Updated URL with namespace 'task_giver' -->
-                <a href="{% url 'task_giver:postings' %}" class="nav-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
+         
+                <a href="{% url 'task_seeker:job_posts' %}" class="nav-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
                     <i class="fas fa-list-ul w-5 mr-3"></i>
-                    My Postings
+                    Job Postings
                 </a>
             </li>
-            <li>
-                <!-- Updated URL with namespace 'task_giver' -->
-                <a href="{% url 'task_giver:postjob' %}" class="nav-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
-                    <i class="fas fa-plus-circle w-5 mr-3"></i>
-                    Post a Job
-                </a>
-            </li>
+
             <li>
                 <a href="#" onclick="alert('Settings feature coming soon!')" class="nav-link flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200">
                     <i class="fas fa-cog w-5 mr-3"></i>
