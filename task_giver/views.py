@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from .models import Task
+from .models import Task, Applications
 from accounts.models import Profile
 from django.contrib import messages
 from .forms import TaskForm
@@ -13,6 +13,10 @@ def dashboard(request):
     first_name = request.user.first_name
     location = request.user.profile.district
     return render(request, 'task_giver/dashboard.html', {'first_name': first_name, 'location': location})
+
+####################
+##### JOB Posts ####
+#####################
 
 @login_required
 def postjob(request):
@@ -70,3 +74,15 @@ def task_delete(request, task_id):
         return redirect('task_giver:postings')
     return redirect('task_giver:postings')
 
+###########################
+##### JOB Applications ####
+###########################
+
+@login_required
+def applications(request):
+    apps = Applications.objects.filter(task__user=request.user)
+
+    context = {
+        'apps': apps
+    }
+    return render(request, 'task_giver/applications.html',context)

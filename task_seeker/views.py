@@ -1,13 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 from django.db import IntegrityError
 import json
 
-from task_giver.models import Task
+from task_giver.models import Task, Applications
 from .models import SavedTask
 
 @login_required
@@ -76,5 +76,8 @@ def save_task(request, task_id):
     return JsonResponse({'status': 'error', 'message': 'Method not allowed.'}, status=405)
 
 @login_required
-def apply(request):
-    redirect(request,'task_giver:dashboard')
+def apply(request, task_id):
+    user = request.user
+    new_application = Applications(user=user,task_id=task_id)
+    new_application.save()
+    return HttpResponse(f"Apply for task {task_id}")

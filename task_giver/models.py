@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.validators import FileExtensionValidator
+from django.db.models import UniqueConstraint
 
 # This model represents a task that a user can post.
 class Task(models.Model):
@@ -14,6 +15,9 @@ class Task(models.Model):
     deadline = models.DateTimeField()
     
     posted_on = models.DateTimeField(auto_now_add=True)
+
+    views = models.PositiveIntegerField(default=0)
+
     
     STATUS_CHOICES = (
         ('open', 'Open'),
@@ -42,3 +46,8 @@ class Applications(models.Model):
             ('approved', 'Approved'),
         )
         status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
+
+        class Meta:
+            constraints = [
+                 UniqueConstraint(fields=['user','task'], name="applications_must_be_unqiue")
+            ]
