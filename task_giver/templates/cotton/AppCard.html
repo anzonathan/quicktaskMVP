@@ -38,7 +38,7 @@
             </div>
         </div>
         <!-- Fixed button to be a link to the detail page with the correct URL -->
-        <a href="#" class="interactive-btn glow-on-hover bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium">
+        <a href="{% url 'task_giver:app_detail' app.id %}" class="interactive-btn glow-on-hover bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium">
             View Application
         </a>
     </div>

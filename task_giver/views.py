@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from .models import Task, Applications
-from accounts.models import Profile
+
 from django.contrib import messages
 from .forms import TaskForm
 from django.utils import timezone
 from decimal import Decimal
+
+from .models import Task, Applications
+from accounts.models import Profile
 
 @login_required
 def dashboard(request):
@@ -48,7 +50,15 @@ def postings(request):
 @login_required
 def task_detail(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
-    return render(request, 'task_giver/task_detail.html', {'task': task})
+    apps = Applications.objects.filter(task=task_id)
+
+
+    context = {
+        'task': task,
+        'apps': apps
+    }
+
+    return render(request, 'task_giver/task_detail.html', context)
 
 @login_required
 def task_edit(request, task_id):
@@ -86,3 +96,8 @@ def applications(request):
         'apps': apps
     }
     return render(request, 'task_giver/applications.html',context)
+
+@login_required
+def app_detail(request,app_id):
+    app = get_object_or_404(Applications, pk=app_id)
+    return render(request, 'task_giver/application_detail.html', {'app': app})

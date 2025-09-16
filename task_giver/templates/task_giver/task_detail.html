@@ -155,6 +155,25 @@
                     <h4 class="text-xl font-semibold text-gray-900 mb-4">Description</h4>
                     <p class="text-gray-800 leading-relaxed">{{ task.description }}</p>
                 </div>
+
+                
+            </div>
+
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Applications</h2>
+                {% if apps %}
+                    <div class="bg-white rounded-xl shadow-lg border border-gray-200 divide-y divide-gray-200">
+                        {% for app in apps %}
+                            <c-AppCard>
+                            </c-AppCard>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="bg-white p-6 rounded-xl text-center text-gray-500 shadow-sm border border-gray-200">
+                        <p class="font-medium">No applications for this task yet.</p>
+                        <p class="text-sm">Check back later for new applicants.</p>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

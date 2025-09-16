@@ -12,5 +12,7 @@ urlpatterns = [
     path('postings/<int:task_id>/edit/', views.task_edit, name='task_edit'),
     path('postings/<int:task_id>/delete/', views.task_delete, name='task_delete'),
     #Job Applications 
-    path('applications/', views.applications, name="applications")
+    path('applications/', views.applications, name="applications"),
+    path('applications/<int:app_id>/', views.app_detail, name="app_detail"),
+
 ]
