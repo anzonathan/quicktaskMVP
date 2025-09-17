@@ -100,4 +100,12 @@ def applications(request):
 @login_required
 def app_detail(request,app_id):
     app = get_object_or_404(Applications, pk=app_id)
-    return render(request, 'task_giver/application_detail.html', {'app': app})
+    task = get_object_or_404(Task, pk=task_id)
+
+
+    context = {
+        'task': task,
+        'app': app
+    }
+
+    return render(request, 'task_giver/application_detail.html', context)

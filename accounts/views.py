@@ -20,13 +20,20 @@ def register(request):
             user.first_name = form.cleaned_data.get('first_name')
             user.last_name = form.cleaned_data.get('last_name')
             user.save()
+            
+            # Retrieve data for the profile
             role = form.cleaned_data['role']
             district = form.cleaned_data.get('district')
+            phone_number = form.cleaned_data.get('phone_number')
+            
+            # Create or get the profile and save the new data
             profile, _ = Profile.objects.get_or_create(user=user)
             profile.role = role
+            profile.phone_number = phone_number # Add this line
             if district:
                 profile.district = district
             profile.save()
+            
             messages.success(request, 'Account created successfully. Please log in.')
             return redirect('accounts:login')
     else:
