@@ -7,7 +7,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from .forms import RegistrationForm
 from .models import Profile
 
-
+@csrf_exempt
 def register(request):
     """
     Handles user registration with a custom form.
@@ -40,6 +40,7 @@ def register(request):
         form = RegistrationForm()
     return render(request, 'accounts/register.html', {'form': form})
 
+@csrf_exempt
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
@@ -53,7 +54,7 @@ def login_view(request):
         form = AuthenticationForm(request)
     return render(request, 'accounts/login.html', {'form': form})
 
-
+@csrf_exempt
 @login_required
 def logout_view(request):
     auth_logout(request)
