@@ -51,7 +51,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20 lg:pt-8">
 
             <div class="mb-6">
-                <a href="#" class="flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors">
+                <a href="{% url 'task_giver:applications' %}" class="flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                     </svg>
@@ -63,12 +63,12 @@
                 <div class="flex flex-col md:flex-row md:items-start md:justify-between mb-6">
                     <div>
                         <h1 class="text-3xl font-bold text-gray-900 mb-2">Review Application</h1>
-                        <h2 class="text-2xl font-semibold text-blue-600">Alex Johnson</h2>
-                        <p class="text-sm text-gray-600">Applied for: <a href="#" class="font-medium text-gray-800 hover:underline">Website Content Creation</a></p>
+                        <h2 class="text-2xl font-semibold text-blue-600">{{ app.user.first_name }} {{ app.user.last_name }}</h2>
+                        <p class="text-sm text-gray-600">Applied on: <a href="#" class="font-medium text-gray-800 hover:underline">{{ app.applied_on }}</a></p>
                     </div>
                     <div class="mt-4 md:mt-0 flex items-center space-x-3">
                          <span class="badge px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-                            Review
+                            {{ app.status }}
                         </span>
                     </div>
                 </div>
@@ -78,15 +78,15 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <div>
                             <p class="font-semibold text-gray-900 mb-1">Email:</p>
-                            <a href="mailto:alex.j@example.com" class="text-blue-600 hover:underline">alex.j@example.com</a>
+                            <a href="mailto:alex.j@example.com" class="text-blue-600 hover:underline">{{ app.user.email }}</a>
                         </div>
                         <div>
                             <p class="font-semibold text-gray-900 mb-1">Phone Number:</p>
-                            <p class="text-gray-800">+256 772 123456</p>
+                            <p class="text-gray-800">{{ app.user.profile.phone_number }}</p>
                         </div>
                         <div class="md:col-span-2">
                             <p class="font-semibold text-gray-900 mb-1">Bio:</p>
-                            <p class="text-gray-800">Creative and results-driven content writer with over 5 years of experience in crafting engaging website copy, blog posts, and marketing materials. Proficient in SEO best practices and dedicated to delivering high-quality content that drives traffic and conversions. I have a strong portfolio in the technology and finance sectors and am ready to start immediately.</p>
+                            <p class="text-gray-800">{{ app.user.profile.bio }}</p>
                         </div>
                     </div>
                 </div>
@@ -94,8 +94,7 @@
                 <hr class="border-gray-200 my-6">
 
                 <div class="flex flex-col sm:flex-row sm:space-x-4 space-y-3 sm:space-y-0">
-                    <form method="post" action="#" class="flex-grow">
-                        <input type="hidden" name="status" value="approved">
+                        <a href="{% url 'task_giver:approve_app' app.id %}">
                         <button type="submit" class="w-full interactive-btn bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium shadow-md">
                             <span class="flex items-center justify-center">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,10 +103,9 @@
                                 Approve Application
                             </span>
                         </button>
-                    </form>
+                    </a>
 
-                    <form method="post" action="#" class="flex-grow">
-                        <input type="hidden" name="status" value="rejected">
+                    <a href="{% url 'task_giver:deny_app' app.id %}">
                         <button type="submit" class="w-full interactive-btn bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium shadow-md">
                             <span class="flex items-center justify-center">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,23 +114,23 @@
                                 Deny Application
                             </span>
                         </button>
-                    </form>
+                    </a>
                 </div>
             </div>
 
             <div class="job-detail-card bg-white rounded-xl shadow-lg border border-gray-200 p-8">
                 <h4 class="text-2xl font-bold text-gray-900 mb-4">Task Details</h4>
                 <div class="prose max-w-none text-gray-700">
-                    <h5 class="font-semibold text-lg text-gray-900 mb-2">Website Content Creation for Tech Startup</h5>
-                    <p class="text-gray-800 leading-relaxed">We are a new tech startup looking for a skilled content writer to create engaging, SEO-optimized content for our new website. The ideal candidate will be responsible for writing landing page copy, a blog series of 5 articles, and product descriptions. A strong understanding of the software-as-a-service (SaaS) industry is a plus. The project must be completed within the next two weeks.</p>
+                    <h5 class="font-semibold text-lg text-gray-900 mb-2">{{ task.title }}</h5>
+                    <p class="text-gray-800 leading-relaxed">{{ task.description }}</p>
                     <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="flex items-center">
                             <p class="font-semibold mr-2">Budget:</p>
-                            <span class="text-green-600 font-bold">UGX500,000</span>
+                            <span class="text-green-600 font-bold">UGX {{ task.budget }}</span>
                         </div>
                         <div class="flex items-center">
                             <p class="font-semibold mr-2">Category:</p>
-                            <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium">Writing & Translation</span>
+                            <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium">{{ task.category }}</span>
                         </div>
                     </div>
                 </div>

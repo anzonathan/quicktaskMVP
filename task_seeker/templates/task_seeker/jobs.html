@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Applications</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/heroicons@2.0.18/24/outline/index.js" type="module"></script>
+    <script src="https://unpkg.com/heroicons@2.0.18/24/solid/index.js" type="module"></script>
+    <style>
+        .stat-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .job-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .job-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.15), 0 8px 16px -4px rgba(0, 0, 0, 0.1);
+        }
+        .interactive-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .interactive-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.4);
+        }
+        .interactive-btn:active {
+            transform: translateY(0);
+        }
+        .interactive-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .interactive-btn:hover::before {
+            left: 100%;
+        }
+        .search-input {
+            transition: all 0.3s ease;
+        }
+        .search-input:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .filter-select {
+            transition: all 0.3s ease;
+        }
+        .filter-select:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1);
+        }
+        .icon-bounce {
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover .icon-bounce {
+            transform: scale(1.2) rotate(5deg);
+        }
+        .profile-img {
+            transition: all 0.3s ease;
+        }
+        .job-card:hover .profile-img {
+            transform: scale(1.1);
+            box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.2);
+        }
+        .status-badge {
+            transition: all 0.3s ease;
+        }
+        .job-card:hover .status-badge {
+            transform: scale(1.05);
+        }
+        .share-btn {
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
+        .job-card:hover .share-btn {
+            opacity: 1;
+            transform: rotate(15deg) scale(1.1);
+        }
+        .price-highlight {
+            transition: all 0.3s ease;
+        }
+        .job-card:hover .price-highlight {
+            transform: scale(1.1);
+            text-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
+        }
+
+        .metric-number {
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover .metric-number {
+            transform: scale(1.1);
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.8); }
+        }
+        .glow-on-hover:hover {
+            animation: pulse-glow 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Mobile Menu Button -->
+    <div class="lg:hidden fixed top-0 left-0 right-0 bg-white shadow-md z-50 p-4">
+        <button id="mobile-menu-btn" class="text-gray-600 hover:text-gray-900 transition-colors">
+            <i class="fas fa-bars text-xl"></i>
+        </button>
+        <span class="ml-3 text-lg font-semibold text-gray-800">QuickTask - My Postings</span>
+    </div>
+
+    <!-- Sidebar -->
+    <c-TSsidebar>
+    </c-TSsidebar>
+    <!-- Overlay for mobile -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden hidden"></div>
+
+    <!-- Main Content -->
+    <div class="lg:ml-64 min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20 lg:pt-8">
+        <!-- Page Title -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">My Jobs</h1>
+            <p class="text-gray-600 mt-2">Tasks that I am doing or done</p>
+        </div>
+
+        <!-- Stats Summary Section -->
+        <c-AppMetrics>
+        </c-AppMetrics> 
+
+
+        <!-- Job Listings Section -->
+        <div class="space-y-4">
+            {% if apps %}
+                {% for app in apps %}
+                     <!-- App Card  -->
+                     <c-TSAppCard>
+                     </c-TSAppCard>
+                {% endfor %}
+            {% else %}
+                <div class="text-center p-8 bg-white rounded-xl shadow-sm border border-gray-200">
+                    <h2 class="text-xl font-semibold text-gray-700">No Jobs yet</h2>
+                    <p class="text-gray-500 mt-2">Start by looking for a job task. </p>
+                    <a href="{% url 'task_seeker:job_posts' %}" class="mt-4 inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">Look for a Job</a>
+                </div>
+            {% endif %}
+        </div>
+
+
+    </div>
+    </div>
+
+    <script>
+        // Mobile menu functionality
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('sidebar-overlay').classList.toggle('hidden');
+        });
+
+        document.getElementById('sidebar-overlay').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+            document.getElementById('sidebar-overlay').classList.add('hidden');
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                document.getElementById('sidebar').classList.remove('-translate-x-full');
+                document.getElementById('sidebar-overlay').classList.add('hidden');
+            } else {
+                document.getElementById('sidebar').classList.add('-translate-x-full');
+            }
+        });
+    </script>
+</body>
+</html>

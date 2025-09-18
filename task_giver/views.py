@@ -100,7 +100,9 @@ def applications(request):
 @login_required
 def app_detail(request,app_id):
     app = get_object_or_404(Applications, pk=app_id)
-    task = get_object_or_404(Task, pk=task_id)
+    app.status = "Review"
+    app.save()
+    task = app.task
 
 
     context = {
@@ -109,3 +111,22 @@ def app_detail(request,app_id):
     }
 
     return render(request, 'task_giver/application_detail.html', context)
+
+@login_required
+def approve_app(request, app_id):
+    app = get_object_or_404(Applications, pk=app_id)
+    # Use lowercase to match the model's choices for consistency
+    app.status = "approved" 
+    app.save()
+
+    return redirect('task_giver:applications')
+
+@login_required
+def deny_app(request, app_id):
+    app = get_object_or_404(Applications, pk=app_id)
+    # Use lowercase to match the model's choices for consistency
+    app.status = "rejected"
+    app.save()
+
+    return redirect('task_giver:applications')
+

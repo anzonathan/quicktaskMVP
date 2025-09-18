@@ -14,5 +14,7 @@ urlpatterns = [
     #Job Applications 
     path('applications/', views.applications, name="applications"),
     path('applications/<int:app_id>/', views.app_detail, name="app_detail"),
+    path('applications/<int:app_id>/approve', views.approve_app, name="approve_app"),
+    path('applications/<int:app_id>/deny', views.deny_app, name="deny_app"),
 
 ]

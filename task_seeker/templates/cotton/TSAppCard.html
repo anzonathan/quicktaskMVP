@@ -6,7 +6,7 @@
 
             <div class="flex-1">
                 <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ app.task }}</h3>
-                <h2 class="text-l font-semibold text-gray-900 mb-2">{{ app.user.first_name }} {{ app.user.last_name }}</h2>
+                <h2 class="text-l font-semibold text-gray-900 mb-2">{{ app.task.user.first_name }} {{ app.task.user.last_name }}</h2>
                 <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600">
                     <span class="flex items-center">
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,8 +37,28 @@
 
             </div>
         </div>
-        <a href="{% url 'task_giver:app_detail' app.id %}" class="interactive-btn glow-on-hover bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium">
-            View Application
-        </a>
+
+        {% if app.status == 'open' or app.status == 'Review' %}
+            <a href="{% url 'task_seeker:withdraw_app' app.id %}" class="interactive-btn glow-on-hover bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-medium">
+                Withdraw Application
+            </a>
+        {% elif app.status == 'Approved' or app.status == 'approved' %}
+            <a href="{% url 'task_seeker:accept_app' app.task.id %}" class="interactive-btn glow-on-hover bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium">
+                Accept Task
+            </a>
+            <a href="{% url 'task_seeker:decline_app' app.id %}" class="interactive-btn glow-on-hover bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-medium">
+                Decline Task
+            </a>
+
+        {% elif app.task.status == "In Progress" and app.status == 'Aprroved' %}
+        <a href="{% url 'task_seeker:accept_app' app.task.id %}" class="interactive-btn glow-on-hover bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium">
+            View Task
+            </a>
+
+        {% else %}
+            <a href="#" class="cursor-not-allowed bg-gray-400 text-white px-6 py-2 rounded-lg font-medium opacity-50">
+                View Application
+            </a>
+        {% endif %}
     </div>
 </div>

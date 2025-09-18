@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
@@ -12,13 +13,30 @@ from .models import SavedTask
 
 @login_required
 def dashboard(request):
-    return render(request, 'task_seeker/dashboard.html')
+
+    name = f'{request.user.first_name} {request.user.last_name}'
+
+    context = {
+        'name': name
+    }
+
+    return render(request, 'task_seeker/dashboard.html', context)
+
+@login_required
+def my_jobs(request):
+
+    apps = Applications.objects.filter(user=request.user, task__status='In Progress')
+
+    context = {
+        'apps': apps
+    }
+    return render(request, 'task_seeker/jobs.html', context)
+
 
 @login_required
 def job_posts(request):
-    # Fetch all jobs from the database.
-
-    jobs = list(Task.objects.all().order_by('-posted_on').values(
+    # Fetch only jobs from the database that have a status of 'open'.
+    jobs = list(Task.objects.filter(status='open').order_by('-posted_on').values(
         'id', 'title', 'user__username', 'posted_on', 'budget', 'deadline', 'location', 
         'category', 'description'
     ))
@@ -36,9 +54,6 @@ def job_posts(request):
         if 'budget' in job:
             job['budget'] = str(job['budget'])
 
-
-   
-    
     context = {
         'jobs_json': json.dumps(jobs),
         'saved_jobs_json': json.dumps(saved_job_ids),
@@ -76,8 +91,47 @@ def save_task(request, task_id):
     return JsonResponse({'status': 'error', 'message': 'Method not allowed.'}, status=405)
 
 @login_required
+def seeker_apps(request):
+
+    apps = Applications.objects.filter(user=request.user, task__status='open')
+
+    context = {
+        'apps': apps
+    }
+    return render(request, 'task_seeker/applications.html', context)
+
+@login_required
 def apply(request, task_id):
     user = request.user
     new_application = Applications(user=user,task_id=task_id)
     new_application.save()
-    return HttpResponse(f"Apply for task {task_id}")
+    return redirect('task_seeker:seeker_apps')
+
+@login_required
+def withdraw_app(request, app_id):
+
+    app = get_object_or_404(Applications, pk=app_id, user=request.user)
+    app.delete()
+
+    messages.success(request,"Application Delete Successfully")
+
+    return redirect('task_seeker:seeker_apps')
+
+@login_required
+def accept_app(request, task_id):
+    task = get_object_or_404(Task, pk=task_id)
+    task.status = "In Progress"
+    task.save()
+
+    messages.success(request,"Task is now in progress")
+
+    return redirect('task_seeker:seeker_apps')
+
+@login_required
+def decline_app(request, app_id):
+    app = get_object_or_404(Applications, pk=app_id, user=request.user)
+    app.delete()
+
+    messages.success(request,"Application Delete Successfully")
+
+    return redirect('task_seeker:seeker_apps')
