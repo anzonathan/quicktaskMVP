@@ -58,6 +58,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://app.quicktaskug.com',
+
+]
 ROOT_URLCONF = 'quicktask.urls'
 
 TEMPLATES = [
